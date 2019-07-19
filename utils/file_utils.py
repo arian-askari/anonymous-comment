@@ -1,5 +1,6 @@
 import re
 import sys
+import os
 import configparser
 
 
@@ -34,4 +35,20 @@ class FileUtils(object):
             return config
         except Exception as e:
             print("Error loading config file: ", e)
+            sys.exit(1)
+
+    @staticmethod
+    def write_file(path, data):
+        """writing data to path.
+        :param path: file path
+        :param data: data to write
+        """
+        # opens file
+        try:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            f = open(str(path), "w")
+            f.write(data)
+            f.close()
+        except Exception as e:
+            print("Error writing file: ", e)
             sys.exit(1)
