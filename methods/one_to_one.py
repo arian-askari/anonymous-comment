@@ -26,20 +26,25 @@ class OneToOne(Method):
                 if file == ".gitignore":
                     continue
 
+                """ read all comments of specific user """
                 comments = FileUtils.getListOfComments(
                     os.sep.join([path, file])
                 )
 
+                """ calculate count comments to be anonymous """
                 count_of_comments = len(comments)
                 unknown_cm_count = (count_of_comments * percentage) // 100
 
+                """ generate a file name for the known and unknown (anonymous) path """
                 unknown_file_name = re.findall(prefix_filename, file)[0]
-                base_unknow_file_path = unknown_file_name + ".txt"
-                base_know_file_path = base_unknow_file_path
+                base_unknown_file_path = unknown_file_name + ".txt"
+                base_known_file_path = base_unknown_file_path
 
+                """ randomly get comments to be anonymous """
                 unknown_set = random.sample(comments, unknown_cm_count)
                 known_set = list(set(comments) - set(unknown_set))
 
+                """ prepare comments for write in file """
                 comment_unknown_text = "\n".join(unknown_set)
                 comment_known_text = "\n".join(known_set)
 
@@ -48,7 +53,7 @@ class OneToOne(Method):
                         Config.DATASET_PATH_ONE_TO_ONE,
                         str(i),
                         "known",
-                        base_know_file_path,
+                        base_known_file_path,
                     ]
                 )
 
@@ -57,10 +62,11 @@ class OneToOne(Method):
                         Config.DATASET_PATH_ONE_TO_ONE,
                         str(i),
                         "unknown",
-                        base_unknow_file_path,
+                        base_unknown_file_path,
                     ]
                 )
 
+                """ write comments in new known and unknown files based on the method """
                 FileUtils.write_file(unknown_file_path, comment_unknown_text)
                 FileUtils.write_file(known_file_path, comment_known_text)
         pass
