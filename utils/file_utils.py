@@ -6,7 +6,7 @@ import configparser
 
 class FileUtils(object):
     @staticmethod
-    def getListOfComments(path):
+    def get_list_of_comments(path):
         """Loads comments of an instagram user.
         :param path: user comments file path
         :return: comments list
