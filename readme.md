@@ -5,7 +5,12 @@ This repository contains resources developed within the following paper:
 	In proceedings of The 42th ACM International ACM SIGIR Conference on Research and Development in Information Retrieval (Sigir ’19).
 
 ## Data
-all of the material will be uploaded by the end of July 2019
+
+According to Instagram policies, we can't share dataset publicly. So please contact Arian Askari at ar.askari[AT]mail.sbu.ac.ir (with [AT] replaced by @) to get dataset.
+
+## Code
+
+all of the codes will be uploaded by the end of July 2019
 
 ## Citation
 
