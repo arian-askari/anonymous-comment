@@ -1,7 +1,10 @@
 import re
 import operator
+import os
+import collections
 from statistics import mean
 from nltk.tokenize import TweetTokenizer
+from utils.file_utils import FileUtils
 
 tweet_tokenizer = TweetTokenizer()
 
@@ -199,3 +202,31 @@ class WordBaseFeatureExtractor:
                 if len(wordFreq[0]) == wordLen
             ]
         )
+
+    @staticmethod
+    def get_most_frequent_word_betwenn_all_commenters(
+        path, most_frequent_word_per_author
+    ):
+        """get most frequent words used between all commenters (users)
+        :param path: path of commenter's comments
+        :param most_frequent_word_per_author: count of most frequent word per user to be consider
+        :return: most frequent words set
+        """
+        most_frequent_words = set()
+        for users_comments_file in sorted(os.listdir(path)):
+            """ for each author get top-most frequent word and added that to word-set"""
+            comments_train = FileUtils.get_list_of_comments(
+                os.sep.join([path, users_comments_file])
+            )
+            word_list_train = WordBaseFeatureExtractor.get_word_list_frequency(
+                comments_train
+            )
+
+            top_words = [word_freq[0] for word_freq in word_list_train]
+            top_words = collections.OrderedDict.fromkeys(top_words)
+            top_words = list(top_words.keys())
+            top_words = [
+                word for word in top_words[:most_frequent_word_per_author]
+            ]
+            most_frequent_words |= set(list(top_words))
+        return most_frequent_words

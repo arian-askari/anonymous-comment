@@ -61,3 +61,6 @@ ONE_TO_ONE_RETRY_NUMBER = int(
 ONE_TO_ONE_PERCENTAGE = int(
     load_project_config()["one_to_one"]["retry_number"]
 )
+ONE_TO_ONE_MOST_FREQUENT_WORD_PER_USER = int(
+    load_project_config()["one_to_one"]["most_frequent_word_per_user"]
+)

@@ -1,16 +1,20 @@
 import os
 import random
 import re
-
-import config.config as Config
+import numpy as np
+from sklearn.svm import SVC
+from measures.privacy import Privacy
 from methods.method import Method
 from utils.file_utils import FileUtils
+import config.config as Config
+
+np.set_printoptions(threshold=np.nan)
 
 
 class OneToOne(Method):
     def dataset_generator(self):
         """Generates dataset of users comments based on OneToOne method.
-       """
+        """
 
         percentage = Config.ONE_TO_ONE_PERCENTAGE
         retry_number = (
@@ -27,7 +31,7 @@ class OneToOne(Method):
                     continue
 
                 """ read all comments of specific user """
-                comments = FileUtils.getListOfComments(
+                comments = FileUtils.get_list_of_comments(
                     os.sep.join([path, file])
                 )
 
@@ -70,3 +74,13 @@ class OneToOne(Method):
                 FileUtils.write_file(unknown_file_path, comment_unknown_text)
                 FileUtils.write_file(known_file_path, comment_known_text)
         pass
+
+    def privacy_measures(self):
+        """Calculates privacy measures based on OneToOne method.
+        """
+        path = Config.DATASET_PATH_ONE_TO_ONE
+        most_frequent_word_per_author = (
+            Config.ONE_TO_ONE_MOST_FREQUENT_WORD_PER_USER
+        )
+        clf = SVC(C=2, kernel="linear", probability=False, cache_size=3092)
+        Privacy.calcualte_privacy(path, clf, most_frequent_word_per_author)

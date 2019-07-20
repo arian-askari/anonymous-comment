@@ -1,12 +1,15 @@
-from utils.character_base_feature_extractor import (
+import os
+import re
+from feature_extractors.character_base_feature_extractor import (
     CharacterBaseFeatureExtractor as CharacterBaseFeature,
 )
-from utils.word_base_feature_extractor import (
+from feature_extractors.word_base_feature_extractor import (
     WordBaseFeatureExtractor as WordBaseFeature,
 )
-from utils.sentence_base_feature_extractor import (
+from feature_extractors.sentence_base_feature_extractor import (
     SentenceBaseFeatureExtractor as SentenceBaseFeature,
 )
+from utils.file_utils import FileUtils
 
 
 class FeatureExtractor:
@@ -17,6 +20,19 @@ class FeatureExtractor:
         :return: words frequency dictionary
         """
         return WordBaseFeature.get_word_list_frequency(comments)
+
+    @staticmethod
+    def get_most_frequent_word_betwenn_all_commenters(
+        path, most_frequent_word_per_author
+    ):
+        """get most frequent words used between all commenters (users)
+        :param path: path of commenter's comments
+        :param most_frequent_word_per_author: count of most frequent word per user to be consider
+        :return: most frequent words set
+        """
+        return WordBaseFeature.get_most_frequent_word_betwenn_all_commenters(
+            path, most_frequent_word_per_author
+        )
 
     @staticmethod
     def get_basic_features(comments):  # 62 features
@@ -250,3 +266,62 @@ class FeatureExtractor:
             countOfMissingIOrWe,
         ]
         return featuresValueList
+
+    @staticmethod
+    def get_vector(user_comments_full_path, most_frequent_words):
+        """ calculate feature vector for user, based on most frequent words and basic features of that comments
+        :param user_comments_full_path: path all comments of specific user
+        :param most_frequent_words: set of most_frequent_words
+        :return: feature vector for user
+        """
+        comments_train = FileUtils.get_list_of_comments(
+            user_comments_full_path
+        )
+
+        word_feq_dict_train = dict(
+            FeatureExtractor.get_word_list_frequency(comments_train)
+        )
+
+        basic_features_value_list = FeatureExtractor.get_basic_features(
+            comments_train
+        )
+
+        word_freq_feature_value_list = []
+
+        for word in most_frequent_words:
+            if word in word_feq_dict_train:
+                word_freq_feature_value_list.append(word_feq_dict_train[word])
+            else:
+                word_freq_feature_value_list.append(0)
+
+        vector = basic_features_value_list + word_freq_feature_value_list
+        return vector
+
+    @staticmethod
+    def get_train_set(path, most_frequent_words):
+        """calculate train set for all user's comments in specific path, consider most frequent words
+        :param path:
+        :param most_frequent_words:
+        :return: train set for all user's comments in specific path
+        """
+        x_train = []
+        y_train = []
+
+        user_prefix_identity = "^(\d+)A"
+        for user_comments_filename in sorted(os.listdir(path)):
+            user_identity = re.findall(
+                user_prefix_identity, user_comments_filename
+            )[0]
+            user_comments_full_path = os.sep.join(
+                [path, user_comments_filename]
+            )
+
+            """ get feature vector for that user"""
+            user_feature_vector = FeatureExtractor.get_vector(
+                user_comments_full_path, most_frequent_words
+            )
+
+            x_train.append(user_feature_vector)
+            y_train.append(user_identity)
+
+        return x_train, y_train
