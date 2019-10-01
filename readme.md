@@ -8,10 +8,6 @@ This repository contains resources developed within the following paper:
 
 According to Instagram policies, we can't share dataset publicly. So please contact Arian Askari at ar.askari[AT]mail.sbu.ac.ir (with [AT] replaced by @) to get dataset.
 
-## Code
-
-all of the codes will be uploaded by the end of July 2019
-
 ## Citation
 
 Please cite the paper, If you used the codes in this repository.
